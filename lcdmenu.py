@@ -11,9 +11,10 @@ from string import split
 from time import sleep, strftime, localtime
 from datetime import datetime, timedelta
 from xml.dom.minidom import *
-from Adafruit_I2C import Adafruit_I2C
-from Adafruit_MCP230xx import Adafruit_MCP230XX
-from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
+#from Adafruit_I2C import Adafruit_I2C
+#from Adafruit_MCP230xx import Adafruit_MCP230XX
+#from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
+from Adafruit_CharLCD import Adafruit_CharLCDPlate
 from ListSelector import ListSelector
 
 import smbus
@@ -24,28 +25,37 @@ DEBUG = 0
 DISPLAY_ROWS = 2
 DISPLAY_COLS = 16
 
+# Char LCD plate button names.
+SELECT                  = 0
+RIGHT                   = 1
+DOWN                    = 2
+UP                      = 3
+LEFT                    = 4
+
+
 # set to 0 if you want the LCD to stay on, 1 to turn off and on auto
 AUTO_OFF_LCD = 0
 
 # set busnum param to the correct value for your pi
 lcd = Adafruit_CharLCDPlate(busnum = 1)
+
 # in case you add custom logic to lcd to check if it is connected (useful)
 #if lcd.connected == 0:
 #    quit()
 
-lcd.begin(DISPLAY_COLS, DISPLAY_ROWS)
-lcd.backlight(lcd.OFF)
+# lcd.begin(DISPLAY_COLS, DISPLAY_ROWS)
+# #lcd.backlight(lcd.OFF)
 
 # commands
 def DoQuit():
     lcd.clear()
     lcd.message('Are you sure?\nPress Sel for Y')
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             lcd.clear()
-            lcd.backlight(lcd.OFF)
+            # #lcd.backlight(lcd.OFF)
             quit()
         sleep(0.25)
 
@@ -53,11 +63,11 @@ def DoShutdown():
     lcd.clear()
     lcd.message('Are you sure?\nPress Sel for Y')
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             lcd.clear()
-            lcd.backlight(lcd.OFF)
+            #lcd.backlight(lcd.OFF)
             commands.getoutput("sudo shutdown -h now")
             quit()
         sleep(0.25)
@@ -66,11 +76,11 @@ def DoReboot():
     lcd.clear()
     lcd.message('Are you sure?\nPress Sel for Y')
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             lcd.clear()
-            lcd.backlight(lcd.OFF)
+            #lcd.backlight(lcd.OFF)
             commands.getoutput("sudo reboot")
             quit()
         sleep(0.25)
@@ -78,48 +88,48 @@ def DoReboot():
 def LcdOff():
     global currentLcd
     currentLcd = lcd.OFF
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdOn():
     global currentLcd
     currentLcd = lcd.ON
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdRed():
     global currentLcd
-    currentLcd = lcd.RED
-    lcd.backlight(currentLcd)
+    currentLcd = RED
+    #lcd.backlight(currentLcd)
 
 def LcdGreen():
     global currentLcd
     currentLcd = lcd.GREEN
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdBlue():
     global currentLcd
     currentLcd = lcd.BLUE
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdYellow():
     global currentLcd
     currentLcd = lcd.YELLOW
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdTeal():
     global currentLcd
     currentLcd = lcd.TEAL
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def LcdViolet():
     global currentLcd
     currentLcd = lcd.VIOLET
-    lcd.backlight(currentLcd)
+    #lcd.backlight(currentLcd)
 
 def ShowDateTime():
     if DEBUG:
         print('in ShowDateTime')
     lcd.clear()
-    while not(lcd.buttonPressed(lcd.LEFT)):
+    while not(lcd.is_pressed(LEFT)):
         sleep(0.25)
         lcd.home()
         lcd.message(strftime('%a %b %d %Y\n%I:%M:%S %p', localtime()))
@@ -185,32 +195,32 @@ def SetDateTime():
     sleep(0.5)
     while 1:
         curval = curvalues[current]
-        if lcd.buttonPressed(lcd.UP):
+        if lcd.is_pressed(UP):
             curval += 1
             curvalues[current] = ValidateDateDigit(current, curval)
             curtime = (curvalues[2], curvalues[0], curvalues[1], curvalues[3], curvalues[4], curvalues[5], 0, 0, 0)
             lcd.home()
             lcd.message(strftime("%b %d, %Y  \n%I:%M:%S %p  ", curtime))
             lcd.setCursor(curc[current], curr[current])
-        if lcd.buttonPressed(lcd.DOWN):
+        if lcd.is_pressed(DOWN):
             curval -= 1
             curvalues[current] = ValidateDateDigit(current, curval)
             curtime = (curvalues[2], curvalues[0], curvalues[1], curvalues[3], curvalues[4], curvalues[5], 0, 0, 0)
             lcd.home()
             lcd.message(strftime("%b %d, %Y  \n%I:%M:%S %p  ", curtime))
             lcd.setCursor(curc[current], curr[current])
-        if lcd.buttonPressed(lcd.RIGHT):
+        if lcd.is_pressed(RIGHT):
             current += 1
             if current > 5:
                 current = 5
             lcd.setCursor(curc[current], curr[current])
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             current -= 1
             if current < 0:
                 lcd.noBlink()
                 return
             lcd.setCursor(curc[current], curr[current])
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             # set the date time in the system
             lcd.noBlink()
             os.system(strftime('sudo date --set="%d %b %Y %H:%M:%S"', curtime))
@@ -225,7 +235,7 @@ def ShowIPAddress():
     lcd.clear()
     lcd.message(commands.getoutput("/sbin/ifconfig").split("\n")[1].split()[1][5:])
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
         sleep(0.25)
     
@@ -235,9 +245,9 @@ def Use10Network():
     lcd.clear()
     lcd.message('Are you sure?\nPress Sel for Y')
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             # uncomment the following once you have a separate network defined
             #commands.getoutput("sudo cp /etc/network/interfaces.hub.10 /etc/network/interfaces")
             lcd.clear()
@@ -252,9 +262,9 @@ def UseDHCP():
     lcd.clear()
     lcd.message('Are you sure?\nPress Sel for Y')
     while 1:
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             break
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             # uncomment the following once you get an original copy in place
             #commands.getoutput("sudo cp /etc/network/interfaces.orig /etc/network/interfaces")
             lcd.clear()
@@ -351,29 +361,29 @@ def GetWord():
     curword = list("A")
     curposition = 0
     while 1:
-        if lcd.buttonPressed(lcd.UP):
+        if lcd.is_pressed(UP):
             if (ord(curword[curposition]) < 127):
                 curword[curposition] = chr(ord(curword[curposition])+1)
             else:
                 curword[curposition] = chr(32)
-        if lcd.buttonPressed(lcd.DOWN):
+        if lcd.is_pressed(DOWN):
             if (ord(curword[curposition]) > 32):
                 curword[curposition] = chr(ord(curword[curposition])-1)
             else:
                 curword[curposition] = chr(127)
-        if lcd.buttonPressed(lcd.RIGHT):
+        if lcd.is_pressed(RIGHT):
             if curposition < DISPLAY_COLS - 1:
                 curword.append('A')
                 curposition += 1
                 lcd.setCursor(curposition, 0)
             sleep(0.75)
-        if lcd.buttonPressed(lcd.LEFT):
+        if lcd.is_pressed(LEFT):
             curposition -= 1
             if curposition <  0:
                 lcd.noBlink()
                 return
             lcd.setCursor(curposition, 0)
-        if lcd.buttonPressed(lcd.SELECT):
+        if lcd.is_pressed(SELECT):
             # return the word
             sleep(0.75)
             return ''.join(curword)
@@ -407,14 +417,14 @@ class CommandToRun:
             lcd.message(self.clist[0])
             for i in range(1, len(self.clist)):
                 while 1:
-                    if lcd.buttonPressed(lcd.DOWN):
+                    if lcd.is_pressed(DOWN):
                         break
                     sleep(0.25)
                 lcd.clear()
                 lcd.message(self.clist[i-1]+'\n'+self.clist[i])          
                 sleep(0.5)
         while 1:
-            if lcd.buttonPressed(lcd.LEFT):
+            if lcd.is_pressed(LEFT):
                 break
 
 class Widget:
@@ -508,7 +518,7 @@ class Display:
     def update(self, command):
         global currentLcd
         global lcdstart
-        lcd.backlight(currentLcd)
+        #lcd.backlight(currentLcd)
         lcdstart = datetime.now()
         if DEBUG:
             print('do',command)
@@ -597,27 +607,27 @@ if DEBUG:
 
 lcdstart = datetime.now()
 while 1:
-    if (lcd.buttonPressed(lcd.LEFT)):
+    if (lcd.is_pressed(LEFT)):
        	display.update('l')
         display.display()
         sleep(0.25)
 
-    if (lcd.buttonPressed(lcd.UP)):
+    if (lcd.is_pressed(UP)):
         display.update('u')
         display.display()
         sleep(0.25)
 
-    if (lcd.buttonPressed(lcd.DOWN)):
+    if (lcd.is_pressed(DOWN)):
         display.update('d')
         display.display()
         sleep(0.25)
 
-    if (lcd.buttonPressed(lcd.RIGHT)):
+    if (lcd.is_pressed(RIGHT)):
         display.update('r')
         display.display()
         sleep(0.25)
 
-    if (lcd.buttonPressed(lcd.SELECT)):
+    if (lcd.is_pressed(SELECT)):
         display.update('s')
         display.display()
         sleep(0.25)
@@ -625,5 +635,5 @@ while 1:
     if AUTO_OFF_LCD:
         lcdtmp = lcdstart + timedelta(seconds=5)
         if (datetime.now() > lcdtmp):
-            lcd.backlight(lcd.OFF)
+            #lcd.backlight(lcd.OFF)
 

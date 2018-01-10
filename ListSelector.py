@@ -8,7 +8,8 @@
 # Move left/right to further filter to quickly get to item.
 # Still need to do case insensitive, and sort.
 from time import sleep
-from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
+# from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
+from Adafruit_CharLCD import Adafruit_CharLCDPlate
 
 class ListSelector:
     def __init__(self, theList, theLcd):
