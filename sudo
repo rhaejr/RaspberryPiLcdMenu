@@ -1,0 +1,27 @@
+ls
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Wishery  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Grow Fonder  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/BUSHES OF LOVE -- Extended Lyric Video.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Data & Picard  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Adele - Hello.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Bite Size Candies  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Boy & Bear  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Wizard Of Meh  Pogo.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/SEAGULLS! (Stop It Now) -- A Bad Lip Reading of The Empire Strikes Back.mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Disturbed  - The Sound Of Silence [Official Music Video].mp4"
+omxplayer "/home/pi/RaspberryPiLcdMenu/Music/Lead Breakfast  Pogo.mp4"
+------------------
+|-#System Info   |
+| #Music         |
+------------------
+start while
+do u
+------------------
+|-#System Info   |
+| #Music         |
+------------------
+do d
+------------------
+| #System Info   |
+|-#Music         |
+------------------

@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.5
+#!/home/pi/berryconda3/bin/python
 #
 # Created by Alan Aufderheide, February 2013
 #
@@ -9,7 +9,7 @@
 import subprocess
 import os
 # from string import split
-from time import sleep, strftime, localtime, gmtime
+from time import sleep, strftime, localtime
 from datetime import datetime, timedelta
 from xml.dom.minidom import *
 # from Adafruit_I2C import Adafruit_I2C
@@ -18,21 +18,10 @@ from xml.dom.minidom import *
 from Adafruit_CharLCD import Adafruit_CharLCDPlate
 from ListSelector import ListSelector
 import xml.etree.ElementTree as etree
-from omxplayer.player import OMXPlayer, OMXPlayerDeadError
-from dbus import DBusException
-from math import floor
 
-import smbus2 as smbus
+import smbus
 
-keyboard_import = True
-try:
-    import keyboard
-except ImportError:
-    keyboard_import = False
-
-
-
-configfile = '/home/pi//RaspberryPiLcdMenu/lcdmenu.xml'
+configfile = 'lcdmenu.xml'
 # set DEBUG=1 for print debug statements
 DEBUG = 1
 DISPLAY_ROWS = 2
@@ -44,7 +33,6 @@ RIGHT = 1
 DOWN = 2
 UP = 3
 LEFT = 4
-
 
 # set to 0 if you want the LCD to stay on, 1 to turn off and on auto
 AUTO_OFF_LCD = 0
@@ -60,49 +48,34 @@ lcd = Adafruit_CharLCDPlate(busnum=1)
 # lcd.begin(DISPLAY_COLS, DISPLAY_ROWS)
 # #lcd.backlight(lcd.OFF)
 
-class Music_player():
-
-    def __init__(self):
-        self.playing = False
-        self.song = ''
-        self.song_str = ''
-
-    def play(self, x):
-        self.song_str = x
-        self.song = OMXPlayer(x)
-        self.song.set_volume(-1000)
-        self.playing = True
-        
-
-
 # commands
 def UpdateSongs():
     tree = etree.parse(configfile)
     root = tree.getroot()
     # This breaks if i move the sogs folder in XML doc
-    songs = root[2][0]
+    songs = root[2][1]
     cur_songs = []
     for current in songs:
-        cur_songs.append(current.attrib['text'])
-    
+        cur_songs.append(current.text[17:-1])
+    if DEBUG:
+        print(cur_songs)
     ls = os.listdir('Music/')
     for song in ls:
-        if song[:16] not in cur_songs:
-            if DEBUG:
-                print(song)
-            el = xml.etree.ElementTree.Element('widget')
-            el.attrib['text'] = song[:16]
-            el.attrib['function'] = 'PlaySong("' + os.getcwd() +'/Music/' + song + '")'
-            # l = len('PlaySong("')
-            # el.text = el.text[:l] + os.getcwd()+'/' + el.text[l:]
+        if song not in cur_songs:
+            el = xml.etree.ElementTree.Element('run')
+            el.attrib['text'] = 'Play ' + song[:11]
+            el.text = 'omxplayer "Music/' + song +'"'
+            l = len('omxplayer "')
+            el.text = el.text[:l] + os.getcwd()+'/' + el.text[l:]
             songs.append(el)
 
     tree.write('lcdmenu.xml',)
     init_menu()
 
 def PlaySong(x):
-    player.play(x)
-    
+    print(x)
+
+
 
 def DoQuit():
     lcd.clear()
@@ -126,7 +99,7 @@ def DoShutdown():
         if lcd.is_pressed(SELECT):
             lcd.clear()
             # lcd.backlight(lcd.OFF)
-            subprocess.getoutput("sudo shutdown -h now")
+            commands.getoutput("sudo shutdown -h now")
             quit()
         sleep(0.25)
 
@@ -312,7 +285,192 @@ def ShowIPAddress():
         sleep(0.25)
 
 
+# only use the following if you find useful
+def Use10Network():
+    "Allows you to switch to a different network for local connection"
+    lcd.clear()
+    lcd.message('Are you sure?\nPress Sel for Y')
+    while 1:
+        if lcd.is_pressed(LEFT):
+            break
+        if lcd.is_pressed(SELECT):
+            # uncomment the following once you have a separate network defined
+            # subprocess.getoutput("sudo cp /etc/network/interfaces.hub.10 /etc/network/interfaces")
+            lcd.clear()
+            lcd.message('Please reboot')
+            sleep(1.5)
+            break
+        sleep(0.25)
 
+
+# only use the following if you find useful
+def UseDHCP():
+    "Allows you to switch to a network config that uses DHCP"
+    lcd.clear()
+    lcd.message('Are you sure?\nPress Sel for Y')
+    while 1:
+        if lcd.is_pressed(LEFT):
+            break
+        if lcd.is_pressed(SELECT):
+            # uncomment the following once you get an original copy in place
+            # subprocess.getoutput("sudo cp /etc/network/interfaces.orig /etc/network/interfaces")
+            lcd.clear()
+            lcd.message('Please reboot')
+            sleep(1.5)
+            break
+        sleep(0.25)
+
+
+def ShowLatLon():
+    if DEBUG:
+        print('in ShowLatLon')
+
+
+def SetLatLon():
+    if DEBUG:
+        print('in SetLatLon')
+
+
+def SetLocation():
+    if DEBUG:
+        print('in SetLocation')
+    global lcd
+    list = []
+    # coordinates usable by ephem library, lat, lon, elevation (m)
+    list.append(['New York', '40.7143528', '-74.0059731', 9.775694])
+    list.append(['Paris', '48.8566667', '2.3509871', 35.917042])
+    selector = ListSelector(list, lcd)
+    item = selector.Pick()
+    # do something useful
+    if (item >= 0):
+        chosen = list[item]
+
+
+def CompassGyroViewAcc():
+    if DEBUG:
+        print('in CompassGyroViewAcc')
+
+
+def CompassGyroViewMag():
+    if DEBUG:
+        print('in CompassGyroViewMag')
+
+
+def CompassGyroViewHeading():
+    if DEBUG:
+        print('in CompassGyroViewHeading')
+
+
+def CompassGyroViewTemp():
+    if DEBUG:
+        print('in CompassGyroViewTemp')
+
+
+def CompassGyroCalibrate():
+    if DEBUG:
+        print('in CompassGyroCalibrate')
+
+
+def CompassGyroCalibrateClear():
+    if DEBUG:
+        print('in CompassGyroCalibrateClear')
+
+
+def TempBaroView():
+    if DEBUG:
+        print('in TempBaroView')
+
+
+def TempBaroCalibrate():
+    if DEBUG:
+        print('in TempBaroCalibrate')
+
+
+def AstroViewAll():
+    if DEBUG:
+        print('in AstroViewAll')
+
+
+def AstroViewAltAz():
+    if DEBUG:
+        print('in AstroViewAltAz')
+
+
+def AstroViewRADecl():
+    if DEBUG:
+        print('in AstroViewRADecl')
+
+
+def CameraDetect():
+    if DEBUG:
+        print('in CameraDetect')
+
+
+def CameraTakePicture():
+    if DEBUG:
+        print('in CameraTakePicture')
+
+
+def CameraTimeLapse():
+    if DEBUG:
+        print('in CameraTimeLapse')
+
+
+# Get a word from the UI, a character at a time.
+# Click select to complete input, or back out to the left to quit.
+# Return the entered word, or None if they back out.
+def GetWord():
+    lcd.clear()
+    lcd.blink()
+    sleep(0.75)
+    curword = list("A")
+    curposition = 0
+    while 1:
+        if lcd.is_pressed(UP):
+            if (ord(curword[curposition]) < 127):
+                curword[curposition] = chr(ord(curword[curposition]) + 1)
+            else:
+                curword[curposition] = chr(32)
+        if lcd.is_pressed(DOWN):
+            if (ord(curword[curposition]) > 32):
+                curword[curposition] = chr(ord(curword[curposition]) - 1)
+            else:
+                curword[curposition] = chr(127)
+        if lcd.is_pressed(RIGHT):
+            if curposition < DISPLAY_COLS - 1:
+                curword.append('A')
+                curposition += 1
+                lcd.setCursor(curposition, 0)
+            sleep(0.75)
+        if lcd.is_pressed(LEFT):
+            curposition -= 1
+            if curposition < 0:
+                lcd.noBlink()
+                return
+            lcd.setCursor(curposition, 0)
+        if lcd.is_pressed(SELECT):
+            # return the word
+            sleep(0.75)
+            return ''.join(curword)
+        lcd.home()
+        lcd.message(''.join(curword))
+        lcd.setCursor(curposition, 0)
+        sleep(0.25)
+
+    lcd.noBlink()
+
+
+# An example of how to get a word input from the UI, and then
+# do something with it
+def EnterWord():
+    if DEBUG:
+        print('in EnterWord')
+    word = GetWord()
+    lcd.clear()
+    lcd.home()
+    if word is not None:
+        lcd.message('>' + word + '<')
+        sleep(5)
 
 
 class CommandToRun:
@@ -326,28 +484,25 @@ class CommandToRun:
 
     def Run(self):
         try:
-            # self.clist = subprocess.getoutput(self.commandToRun)
-            # print(self.clist)
-            # self.clist = self.clist.split('\n')
-            # # self.clist = split(subprocess.Popen(self.commandToRun, stdout=subprocess.PIPE), '\n')
-            # if len(self.clist) > 0:
-            #     lcd.clear()
-            #     lcd.message(self.clist[0])
-            #     for i in range(1, len(self.clist)):
-            #         while 1:
-            #             if lcd.is_pressed(DOWN):
-            #                 break
-            #             sleep(0.25)
-            #         lcd.clear()
-            #         lcd.message(self.clist[i - 1] + '\n' + self.clist[i])
-            #         sleep(0.5)
-            # while 1:
-            #     if lcd.is_pressed(LEFT):
-            #         break
+            self.clist = split(subprocess.getoutput(self.commandToRun), '\n')
+            # self.clist = split(subprocess.Popen(self.commandToRun, stdout=subprocess.PIPE), '\n')
+            if len(self.clist) > 0:
+                lcd.clear()
+                lcd.message(self.clist[0])
+                for i in range(1, len(self.clist)):
+                    while 1:
+                        if lcd.is_pressed(DOWN):
+                            break
+                        sleep(0.25)
+                    lcd.clear()
+                    lcd.message(self.clist[i - 1] + '\n' + self.clist[i])
+                    sleep(0.5)
+            while 1:
+                if lcd.is_pressed(LEFT):
+                    break
 
-            subprocess.Popen(self.commandToRun.split())
-        except Exception as e:
-            print(e.args)
+            # subprocess.Popen(self.commandToRun)
+        except:
             print(self.commandToRun)
 
 
@@ -418,10 +573,10 @@ class Display:
             self.curTopItem = 0
         if DEBUG:
             print('------------------')
-        message_str = ''
+        str = ''
         for row in range(self.curTopItem, self.curTopItem + DISPLAY_ROWS):
             if row > self.curTopItem:
-                message_str += '\n'
+                str += '\n'
             if row < len(self.curFolder.items):
                 if row == self.curSelectedItem:
                     cmd = '-' + self.curFolder.items[row].text
@@ -430,7 +585,7 @@ class Display:
                             cmd += ' '
                     if DEBUG:
                         print('|' + cmd + '|')
-                    message_str += cmd
+                    str += cmd
                 else:
                     cmd = ' ' + self.curFolder.items[row].text
                     if len(cmd) < 16:
@@ -438,11 +593,11 @@ class Display:
                             cmd += ' '
                     if DEBUG:
                         print('|' + cmd + '|')
-                    message_str += cmd
+                    str += cmd
         if DEBUG:
             print('------------------')
         lcd.home()
-        lcd.message(message_str)
+        lcd.message(str)
 
     def update(self, command):
         global currentLcd
@@ -510,8 +665,7 @@ class Display:
         elif isinstance(self.curFolder.items[self.curSelectedItem], Widget):
             if DEBUG:
                 print('eval', self.curFolder.items[self.curSelectedItem].function)
-            # eval(self.curFolder.items[self.curSelectedItem].function + '()')
-            eval(self.curFolder.items[self.curSelectedItem].function)
+            eval(self.curFolder.items[self.curSelectedItem].function + '()')
         elif isinstance(self.curFolder.items[self.curSelectedItem], CommandToRun):
             self.curFolder.items[self.curSelectedItem].Run()
 
@@ -521,8 +675,7 @@ class Display:
         if isinstance(self.curFolder.items[self.curSelectedItem], Widget):
             if DEBUG:
                 print('eval', self.curFolder.items[self.curSelectedItem].function)
-            # eval(self.curFolder.items[self.curSelectedItem].function + '()')
-            eval(self.curFolder.items[self.curSelectedItem].function)
+            eval(self.curFolder.items[self.curSelectedItem].function + '()')
 
 
 
@@ -545,101 +698,38 @@ def init_menu():
 
 
 init_menu()
-player = Music_player()
-player.play("/home/pi/RaspberryPiLcdMenu/Processing R2D2.mp3")
 
 if DEBUG:
     print('start while')
 
 lcdstart = datetime.now()
-def main_loop():
-    while 1:
-        try:
-            volume = player.song.volume()
-        except:
-            pass
-        if (lcd.is_pressed(LEFT) or keyboard.is_pressed('left')):
-            try:
-                if player.song.is_playing():
-                    player.song.seek(-5.0)
-                    #sleep(0.25)
-            except:# (OMXPlayerDeadError ,AttributeError) as e:
-                display.update('l')
-                display.display()
-                #sleep(0.25)
+while 1:
+    if (lcd.is_pressed(LEFT)):
+        display.update('l')
+        display.display()
+        sleep(0.25)
 
-        if (lcd.is_pressed(UP) or keyboard.is_pressed('up')):
-            try:
-                if player.song.is_playing():
-                    player.song.set_volume(volume + 500)
-            except:# (OMXPlayerDeadError ,AttributeError) as e:
-                display.update('u')
-                display.display()
-                #sleep(0.25)
+    if (lcd.is_pressed(UP)):
+        display.update('u')
+        display.display()
+        sleep(0.25)
 
-        if (lcd.is_pressed(DOWN) or keyboard.is_pressed('down')):
-            try:
-                if player.song.is_playing():
-                    player.song.set_volume(volume - 500)
-            except:# (OMXPlayerDeadError ,AttributeError):
-                display.update('d')
-                display.display()
-                #sleep(0.25)
+    if (lcd.is_pressed(DOWN)):
+        display.update('d')
+        display.display()
+        sleep(0.25)
 
-        if (lcd.is_pressed(RIGHT) or keyboard.is_pressed('right')):
-            try:
-                if player.song.is_playing():
-                    player.song.seek(5.0)
-                    #sleep(0.25)
-            except:# (OMXPlayerDeadError ,AttributeError) as e:
-                display.update('r')
-                if player.playing:
-                    lcd.clear()
-                else:
-                    display.display()
-                #sleep(0.25)
+    if (lcd.is_pressed(RIGHT)):
+        display.update('r')
+        display.display()
+        sleep(0.25)
 
-        if (lcd.is_pressed(SELECT) or keyboard.is_pressed('enter')):
-            try:
-                if player.song.is_playing():
-                    player.song.quit()
-                    #sleep(0.25)
-            except:# (OMXPlayerDeadError ,AttributeError) as e:
-                display.update('s')
-                display.display()
-                #sleep(0.25)
+    if (lcd.is_pressed(SELECT)):
+        display.update('s')
+        display.display()
+        sleep(0.25)
 
-        if AUTO_OFF_LCD:
-            lcdtmp = lcdstart + timedelta(seconds=5)
-            # if (datetime.now() > lcdtmp):
-            #     #lcd.backlight(lcd.OFF)
-
-        try:
-            if player.song.is_playing():
-                lcd.home()
-                lcd.message('{}\n{}:{}  {}'.format(
-                            player.song_str[34:50], 
-                            strftime("%M:%S", gmtime(floor(player.song.position()))), 
-                            strftime("%M:%S", gmtime(floor(player.song.duration()))),
-                            floor(player.song.volume())))
-        except OMXPlayerDeadError:
-            if player.playing:
-                player.playing = False
-                player.song = ''
-                display.display()
-            print('finished')
-        except (AttributeError, DBusException):
-            pass
-
-if __name__ == '__main__':
-    try:
-        main_loop()
-    except KeyboardInterrupt:
-        try:
-            player.song.quit()
-            lcd.clear()
-        except:
-            
-            pass
-        lcd.clear()
-        exit()
+    if AUTO_OFF_LCD:
+        lcdtmp = lcdstart + timedelta(seconds=5)
+        # if (datetime.now() > lcdtmp):
+        #     #lcd.backlight(lcd.OFF)

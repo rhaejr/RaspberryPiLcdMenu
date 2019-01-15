@@ -1,0 +1,148 @@
+Audio codec aac channels 2 samplerate 44100 bitspersample 16
+Subtitle count: 0, state: off, index: 1, delay: 0
+have a nice day ;)
+ls
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Adele_-_Hello.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/SEAGULLS!_(Stop_It_Now)_--_A_Bad_Lip_Reading_of_The_Empire_Strikes_Back.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Disturbed__-_The_Sound_Of_Silence_[Official_Music_Video].mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Wishery__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/BUSHES_OF_LOVE_--_Extended_Lyric_Video.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Wizard_Of_Meh__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Grow_Fonder__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Lead_Breakfast__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/MACKLEMORE_&_RYAN_LEWIS_-_THRIFT_SHOP_FEAT_WANZ_(OFFICIAL_VIDEO).mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Data_&_Picard__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Boy_&_Bear__Pogo.mp4
+omxplayer /home/pi/RaspberryPiLcdMenu/Music/Bite_Size_Candies__Pogo.mp4
+------------------
+|-#System Info   |
+| #Music         |
+------------------
+start while
+do d
+------------------
+| #System Info   |
+|-#Music         |
+------------------
+do r
+------------------
+|->Update Songs  |
+| #Songs         |
+------------------
+do d
+------------------
+| >Update Songs  |
+|-#Songs         |
+------------------
+do r
+------------------
+|-*Play Adele_-_Hel|
+| *Play SEAGULLS!_(|
+------------------
+do d
+------------------
+| *Play Adele_-_Hel|
+|-*Play SEAGULLS!_(|
+------------------
+do d
+------------------
+| *Play SEAGULLS!_(|
+|-*Play Disturbed__|
+------------------
+do d
+------------------
+| *Play Disturbed__|
+|-*Play Wishery__Po|
+------------------
+do d
+------------------
+| *Play Wishery__Po|
+|-*Play BUSHES_OF_L|
+------------------
+do d
+------------------
+| *Play BUSHES_OF_L|
+|-*Play Wizard_Of_M|
+------------------
+do d
+------------------
+| *Play Wizard_Of_M|
+|-*Play Grow_Fonder|
+------------------
+do d
+------------------
+| *Play Grow_Fonder|
+|-*Play Lead_Breakf|
+------------------
+do d
+------------------
+| *Play Lead_Breakf|
+|-*Play MACKLEMORE_|
+------------------
+do d
+------------------
+| *Play MACKLEMORE_|
+|-*Play Data_&_Pica|
+------------------
+do r
+------------------
+| *Play MACKLEMORE_|
+|-*Play Data_&_Pica|
+------------------
+do s
+check widget
+------------------
+| *Play MACKLEMORE_|
+|-*Play Data_&_Pica|
+------------------
+do s
+check widget
+------------------
+| *Play MACKLEMORE_|
+|-*Play Data_&_Pica|
+------------------
+do l
+foundit
+------------------
+| >Update Songs  |
+|-#Songs         |
+------------------
+do d
+------------------
+| >Update Songs  |
+|-#Songs         |
+------------------
+do l
+foundit
+------------------
+|-#Music         |
+| >Quit          |
+------------------
+do d
+------------------
+| #Music         |
+|->Quit          |
+------------------
+do d
+------------------
+| >Quit          |
+|->Reboot        |
+------------------
+do d
+------------------
+| >Reboot        |
+|->Shutdown      |
+------------------
+do u
+------------------
+|->Reboot        |
+| >Shutdown      |
+------------------
+do u
+------------------
+|->Quit          |
+| >Reboot        |
+------------------
+do s
+check widget
+eval DoQuit
